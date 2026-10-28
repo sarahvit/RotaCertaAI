@@ -1,7 +1,7 @@
 """Rede fictícia, com tempo de espera por embarque e até uma conexão."""
 import networkx as nx
 
-LINHAS = {'L1': ['P1','P2','P4'], 'L2': ['P1','P3','P5'], 'L3': ['P3','P4','P6'], 'L4': ['P2','P5','P6']}
+LINHAS = {'L1': ['P1','P2','P4'], 'L2': ['P1','P3','P5'], 'L3': ['P3','P4','P6'], 'L4': ['P2','P4','P5','P6']}
 NOMES = {'P1':'Praça Central', 'P2':'Mercado', 'P3':'Terminal Norte', 'P4':'Universidade', 'P5':'Hospital', 'P6':'Parque'}
 
 def alternativa(origem, destino, linha_atual):
@@ -28,7 +28,8 @@ def alternativa(origem, destino, linha_atual):
     for path in nx.all_simple_paths(graph, source, target, cutoff=9):
         linhas = [n[0] for n in path[1:-1]]
         trocas = sum(a != b for a, b in zip(linhas, linhas[1:]))
-        if trocas <= 1:
+        percorridas = {a[0] for a, b in zip(path[1:-1], path[2:-1]) if a[0] == b[0] and a[1] != b[1]}
+        if trocas <= 1 and set(linhas) <= percorridas:
             candidates.append((nx.path_weight(graph, path, 'weight'), path))
     if not candidates:
         return None

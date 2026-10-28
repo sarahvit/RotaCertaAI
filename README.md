@@ -1,27 +1,47 @@
 # RotaCerta IA
 
-O RotaCerta IA é um protótipo acadêmico que propõe complementar as informações de transporte coletivo apresentadas por aplicativos como o MOCBUS. A ideia surgiu a partir de situações observadas por passageiros em Montes Claros (MG): a previsão de chegada pode não corresponder ao tempo real de espera, e uma falha no sinal de GPS pode fazer com que uma linha ou viagem deixe de aparecer causando dúvida ao passageiro se deve continuar esperando ainda o onibus ou não.
+O RotaCerta IA é um protótipo acadêmico que busca ajudar passageiros a lidar com a incerteza sobre a chegada do ônibus. A proposta é complementar informações de aplicativos de transporte coletivo, como o MOCBUS, com estimativas e explicações quando o horário informado parece pouco confiável ou o sinal de GPS está indisponível.
 
-Pela falta de datasets disponíveis, o projeto **não usa dados reais da operação**. Linhas, pontos, sinais, clima, trânsito e histórico usados na demonstração são fictícios.
+A ideia parte de situações observadas por passageiros em Montes Claros (MG). **O protótipo não é oficial nem integrado ao MOCBUS:** a rede, o histórico, os horários, o GPS, o clima e o trânsito usados na demonstração são fictícios.
 
-## Qual problema queremos resolver?
+## Entendendo o problema
 
-Ao consultar o aplicativo, uma pessoa pode ver que um ônibus está próximo e organizar sua rotina com base nessa informação. Se o tempo exibido não for fiel, ela pode acabar esperando mais de cinco minutos além do esperado — tempo que poderia usar para realizar outra atividade. A espera fica ainda mais difícil de planejar quando o aplicativo deixa de apresentar uma linha ou viagem por falta de sinal.
+Imagine que você está no ponto e o aplicativo informa que o ônibus deve chegar em **5 minutos**. Você decide esperar porque acredita que ele está perto. Mas passam 5, 10 ou 15 minutos e o ônibus ainda não aparece. Além da frustração, você perde tempo que poderia ter usado para outra atividade e não sabe quanto tempo mais precisará esperar.
 
-A ausência da linha na tela pode gerar uma dúvida: o ônibus deixou de circular ou apenas perdeu a comunicação do GPS? A proposta do RotaCerta IA é **reduzir essa incerteza**, apresentando uma estimativa baseada em histórico e indicando situações possíveis. Assim, o passageiro pode tomar uma decisão mais informada sobre esperar ou buscar outra informação.
+Existe também outra situação: às vezes uma viagem ou linha deixa de aparecer no aplicativo. Isso pode ocorrer por uma falha de GPS ou de comunicação, mas a ausência na tela, por si só, não esclarece o que aconteceu. O passageiro fica com perguntas como:
 
-**Uma falha de GPS não confirma que o ônibus está circulando, assim como a falta de sinal não confirma o cancelamento.** O protótipo apresenta probabilidades, não uma garantia de que o ônibus passará. Para afirmar o que aconteceu numa viagem real, seriam necessários dados confiáveis e independentes do GPS.
+- O ônibus está em circulação, mas perdeu o sinal de localização?
+- Ele está atrasado?
+- A viagem não será realizada?
+- Vale a pena continuar aguardando ou procurar outra opção?
+
+Sem informações adicionais, a pessoa não consegue distinguir essas possibilidades com segurança. A ausência de GPS **não confirma que o ônibus está circulando nem que a viagem foi cancelada**.
+
+## O que propomos
+
+A proposta é usar um histórico de viagens e informações disponíveis no momento da consulta para estimar a chance de o ônibus chegar e mostrar situações operacionais possíveis. Em vez de apresentar uma conclusão definitiva quando não há sinal, o RotaCerta IA busca explicar **o grau de incerteza** e oferecer uma alternativa de deslocamento na rede simulada.
+
+Em uma versão futura com dados reais e validação, a intenção seria ajudar a pessoa a decidir se continua esperando ou se procura outra opção. A precisão das estimativas ainda não foi comprovada: o protótipo atual demonstra a ideia com dados fictícios e não garante que o ônibus vá passar.
+
+### Exemplo fictício
+
+Uma passageira seleciona a **Praça Central (P1)**. A linha L1 aparece com sinal de GPS indisponível. O protótipo mostra uma chance estimada de chegada em até 20 minutos e as probabilidades de situações como atraso e falha de GPS. Esses valores são resultados da simulação, não confirmações sobre uma viagem real.
+
+A passageira também pode pedir uma explicação ao Gemma. Além disso, o programa procura uma alternativa até o ponto final da linha com maior chance simulada de não ser realizada. Se houver caminho, pode mostrar, por exemplo, **L2 com conexão para L3**; se não houver, informa que não encontrou uma opção na rede fictícia. Não são verificadas tarifas ou regras reais de integração.
 
 ## Como funciona o protótipo
 
 1. A pessoa seleciona um ponto fictício no mapa.
 2. Os cards das linhas que passam pelo ponto mostram a chance estimada de chegada em até 20 minutos e as probabilidades de quatro cenários: operação normal, atraso, falha de GPS e viagem não realizada.
-3. O passageiro pode pedir ao **Gemma** uma explicação, em linguagem simples, para a linha escolhida.
-4. Condições fictícias de clima e trânsito aparecem como contexto da demonstração e podem ser mencionadas pelo Gemma.
+3. A pessoa pode pedir ao **Gemma** uma explicação em linguagem simples para uma linha.
+4. Condições fictícias de clima e trânsito aparecem como contexto e podem ser mencionadas pelo Gemma.
+5. O programa procura automaticamente uma alternativa direta ou com até uma conexão até o ponto final da linha com maior chance simulada de viagem não realizada. Abaixo de 40%, apresenta a rota como opção de planejamento; a partir de 40%, indica risco simulado elevado. Se não encontrar um caminho, informa essa limitação.
 
-As probabilidades são calculadas por **dois modelos Random Forest treinados localmente com um dataset sintético**: um para a chegada e outro para a situação da viagem. O Gemma não foi treinado com esse dataset; ele explica os resultados e o contexto fictício enviados a ele. Clima e trânsito não são entradas dos modelos e não foi calculado seu efeito sobre as estimativas.
+As probabilidades vêm de **dois modelos Random Forest treinados localmente com dados sintéticos**: um estima a chegada em até 20 minutos; o outro compara os quatro cenários operacionais. A probabilidade de chegada vem de um modelo separado e não deve ser somada às probabilidades dos cenários.
 
-O mapa é ilustrativo: não utiliza a localização do passageiro, ruas reais ou GPS de ônibus. O aplicativo não informa uma previsão real de quantos minutos faltam para a chegada. O desempenho medido em dados simulados não demonstra precisão em Montes Claros.
+O Gemma não foi treinado com esse dataset e não calcula as probabilidades dos cards. Ele recebe os resultados e o contexto fictício para explicá-los. Clima e trânsito não são entradas dos modelos, e seu efeito na previsão não foi calculado.
+
+O destino da alternativa é o **ponto final da linha original**, pois o aplicativo não pergunta onde a pessoa quer descer. O limiar de 40%, os tempos e as esperas são fictícios; risco estimado não confirma cancelamento. O protótipo não fornece uma previsão real de quantos minutos faltam para o ônibus chegar.
 
 ## Como rodar no Windows
 
