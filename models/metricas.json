@@ -1,0 +1,123 @@
+{
+  "treino": 4010,
+  "teste": 990,
+  "separacao": "dias simulados 0–71 / 72–89",
+  "chegada": {
+    "classes": [
+      0,
+      1
+    ],
+    "matriz_confusao": [
+      [
+        49,
+        97
+      ],
+      [
+        9,
+        835
+      ]
+    ],
+    "relatorio": {
+      "0": {
+        "precision": 0.8448275862068966,
+        "recall": 0.3356164383561644,
+        "f1-score": 0.4803921568627451,
+        "support": 146.0
+      },
+      "1": {
+        "precision": 0.8959227467811158,
+        "recall": 0.9893364928909952,
+        "f1-score": 0.9403153153153153,
+        "support": 844.0
+      },
+      "accuracy": 0.8929292929292929,
+      "macro avg": {
+        "precision": 0.8703751664940063,
+        "recall": 0.6624764656235798,
+        "f1-score": 0.7103537360890302,
+        "support": 990.0
+      },
+      "weighted avg": {
+        "precision": 0.8883875008782511,
+        "recall": 0.8929292929292929,
+        "f1-score": 0.8724882636647342,
+        "support": 990.0
+      }
+    },
+    "brier": 0.08656971933098852,
+    "baseline_acuracia": 0.8525252525252526
+  },
+  "situacao": {
+    "classes": [
+      "atraso",
+      "falha_gps",
+      "normal",
+      "viagem_nao_realizada"
+    ],
+    "matriz_confusao": [
+      [
+        0,
+        52,
+        185,
+        1
+      ],
+      [
+        0,
+        141,
+        20,
+        5
+      ],
+      [
+        1,
+        49,
+        460,
+        1
+      ],
+      [
+        0,
+        23,
+        9,
+        43
+      ]
+    ],
+    "relatorio": {
+      "atraso": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1-score": 0.0,
+        "support": 238.0
+      },
+      "falha_gps": {
+        "precision": 0.5320754716981132,
+        "recall": 0.8493975903614458,
+        "f1-score": 0.654292343387471,
+        "support": 166.0
+      },
+      "normal": {
+        "precision": 0.6824925816023739,
+        "recall": 0.9001956947162426,
+        "f1-score": 0.7763713080168776,
+        "support": 511.0
+      },
+      "viagem_nao_realizada": {
+        "precision": 0.86,
+        "recall": 0.5733333333333334,
+        "f1-score": 0.688,
+        "support": 75.0
+      },
+      "accuracy": 0.6505050505050505,
+      "macro avg": {
+        "precision": 0.5186420133251217,
+        "recall": 0.5807316546027554,
+        "f1-score": 0.5296659128510872,
+        "support": 990.0
+      },
+      "weighted avg": {
+        "precision": 0.5066446843441412,
+        "recall": 0.6505050505050505,
+        "f1-score": 0.5625639064635805,
+        "support": 990.0
+      }
+    }
+  }
+}
